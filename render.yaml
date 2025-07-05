@@ -3,7 +3,7 @@ services:
     name: tmt-backend
     env: node
     plan: free
-    rootDir: Token Mint/backend
+    rootDir: backend
     buildCommand: npm install --production
     startCommand: node index.js
     envVars:
