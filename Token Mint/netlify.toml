@@ -1,5 +1,5 @@
 [build]
-  publish = "frontend"
+  publish = "Token Mint/frontend"
   command = "echo 'Frontend deployment triggered'"
 
 [[headers]]
