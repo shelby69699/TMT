@@ -7,6 +7,7 @@ import axios from 'axios';
 import fs from 'fs/promises';
 import path from 'path';
 import FormData from 'form-data';
+import fetch from 'node-fetch';
 import { Lucid, Blockfrost, fromText, toUnit } from 'lucid-cardano';
 import { Address, BaseAddress } from '@emurgo/cardano-serialization-lib-nodejs';
 const app = express();
@@ -402,16 +403,77 @@ app.post('/build-mint-tx', async (req, res) => {
         
         console.log('✅ Transaction data prepared for frontend');
         
+        // ✅ CRITICAL: Fetch current slot from Cardano blockchain
+        console.log('🕐 Fetching current slot from Cardano blockchain...');
+        let currentSlot;
+        try {
+            // Get current slot from Lucid/Blockfrost
+            const protocolParameters = await lucid.provider.getProtocolParameters();
+            console.log('📊 Protocol parameters fetched');
+            
+            // Get current slot from provider
+            const latestBlock = await lucid.provider.getLatestBlock();
+            currentSlot = latestBlock.slot;
+            console.log('✅ Current slot fetched from blockchain:', currentSlot);
+            
+            // Validate slot is a number
+            if (typeof currentSlot !== 'number' || isNaN(currentSlot)) {
+                throw new Error('Invalid slot received from blockchain: ' + currentSlot);
+            }
+            
+        } catch (slotError) {
+            console.error('❌ Failed to fetch current slot:', slotError.message);
+            // Fallback: try to get slot from Blockfrost API directly
+            try {
+                console.log('🔄 Trying Blockfrost API fallback for slot...');
+                const blockfrostResponse = await fetch('https://cardano-mainnet.blockfrost.io/api/v0/blocks/latest', {
+                    headers: {
+                        'project_id': BLOCKFROST_KEY
+                    }
+                });
+                
+                if (!blockfrostResponse.ok) {
+                    throw new Error('Blockfrost API error: ' + blockfrostResponse.statusText);
+                }
+                
+                const blockData = await blockfrostResponse.json();
+                currentSlot = blockData.slot;
+                console.log('✅ Current slot from Blockfrost fallback:', currentSlot);
+                
+                if (typeof currentSlot !== 'number' || isNaN(currentSlot)) {
+                    throw new Error('Invalid slot from Blockfrost: ' + currentSlot);
+                }
+                
+            } catch (fallbackError) {
+                console.error('❌ Blockfrost fallback also failed:', fallbackError.message);
+                return res.status(500).json({
+                    success: false,
+                    error: 'Failed to fetch current slot from Cardano blockchain: ' + fallbackError.message
+                });
+            }
+        }
+        
+        // Add slot information to transaction data
+        const transactionDataWithSlot = {
+            ...transactionData,
+            currentSlot: currentSlot,
+            expirySlot: currentSlot + 3600, // Add 1 hour buffer (3600 slots)
+            slotTimestamp: new Date().toISOString()
+        };
+        
         // Return transaction data instead of built transaction
-        const unsignedTxHex = JSON.stringify(transactionData);
+        const unsignedTxHex = JSON.stringify(transactionDataWithSlot);
         console.log('✅ Unsigned transaction built successfully');
         console.log('📏 Transaction length:', unsignedTxHex.length);
+        console.log('🕐 Current slot included:', currentSlot);
         res.json({
             success: true,
             transactionData: JSON.parse(unsignedTxHex),
             policyId,
             unit,
             metadata,
+            currentSlot: currentSlot,
+            expirySlot: currentSlot + 3600,
             message: 'Transaction data prepared successfully - frontend will build transaction'
         });
     } catch (error) {
