@@ -257,16 +257,16 @@ app.post('/convert-address', async (req, res) => {
 app.post('/build-mint-tx', async (req, res) => {
     console.log('🔨 Building mint transaction...');
     try {
-        const { tokenName, tokenSymbol, tokenDescription, ipfsCID, tokenSupply, recipientAddress, utxos, changeAddressCbor } = req.body;
+        const { tokenName, tokenSymbol, tokenDescription, ipfsCID, tokenSupply, recipientAddress, changeAddressCbor } = req.body;
         // Log all input data for debugging
         console.log('🟢 Mint TX input:', {
-            tokenName, tokenSymbol, tokenDescription, ipfsCID, tokenSupply, recipientAddress, utxos, changeAddressCbor
+            tokenName, tokenSymbol, tokenDescription, ipfsCID, tokenSupply, recipientAddress, changeAddressCbor
         });
-        // Validate required fields
-        if (!tokenName || !tokenSymbol || !tokenDescription || !ipfsCID || !tokenSupply || !recipientAddress || !utxos || !changeAddressCbor) {
+        // Validate required fields (UTXOs removed - frontend handles them)
+        if (!tokenName || !tokenSymbol || !tokenDescription || !ipfsCID || !tokenSupply || !recipientAddress || !changeAddressCbor) {
             return res.status(400).json({
                 success: false,
-                error: 'Missing required fields: tokenName, tokenSymbol, tokenDescription, ipfsCID, tokenSupply, recipientAddress, utxos, changeAddressCbor'
+                error: 'Missing required fields: tokenName, tokenSymbol, tokenDescription, ipfsCID, tokenSupply, recipientAddress, changeAddressCbor'
             });
         }
         // Extract keyHash from changeAddressCbor
@@ -346,7 +346,7 @@ app.post('/build-mint-tx', async (req, res) => {
         console.log('🎯 Building transaction for:', tokenName);
         console.log('🏠 Recipient (converted):', recipientAddressBech32);
         console.log('🔄 Change address (converted):', changeAddressBech32);
-        console.log('📦 UTXOs count:', utxos.length);
+        console.log('📦 UTXOs: Frontend will handle via wallet.getUtxos()');
         
         // ✅ Create dynamic policy script with user's keyHash
         const policyScriptJson = {
@@ -384,7 +384,7 @@ app.post('/build-mint-tx', async (req, res) => {
         
         console.log('🔨 Building transaction with simple approach...');
         
-        // ✅ SIMPLE APPROACH - Return transaction data for frontend to handle
+        // ✅ SIMPLE APPROACH - Return transaction data for frontend to handle  
         const transactionData = {
             policyId: policyId,
             policyScript: policyScriptJson,
@@ -397,8 +397,8 @@ app.post('/build-mint-tx', async (req, res) => {
             changeAddress: changeAddressBech32,
             userKeyHash: userKeyHash,
             metadata: metadata,
-            ipfsCID: ipfsCID,
-            utxos: utxos
+            ipfsCID: ipfsCID
+            // UTXOs removed - frontend uses wallet.getUtxos() directly
         };
         
         console.log('✅ Transaction data prepared for frontend');
