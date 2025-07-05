@@ -1,0 +1,25 @@
+{
+  "min_fee_a": 44,
+  "min_fee_b": 155381,
+  "key_deposit": "2000000",
+  "pool_deposit": "500000000",
+  "max_tx_size": 16384,
+  "max_val_size": 5000,
+  "collateral_percent": 150,
+  "max_collateral_inputs": 3,
+  "coins_per_utxo_byte": 4310,
+  "price_mem": 0.0577,
+  "price_step": 0.0000721,
+  "max_tx_ex_mem": "14000000",
+  "max_tx_ex_steps": "10000000000",
+  "max_block_ex_mem": "62000000",
+  "max_block_ex_steps": "40000000000",
+  "max_block_size": 90112,
+  "max_bh_size": 1100,
+  "min_pool_cost": 340000000,
+  "protocol_version": {
+    "major": 8,
+    "minor": 1
+  },
+  "min_utxo": "1000000"
+} 

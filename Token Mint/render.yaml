@@ -1,0 +1,18 @@
+services:
+  - type: web
+    name: tmt-backend
+    env: node
+    plan: free
+    rootDir: backend
+    buildCommand: npm install --production
+    startCommand: node index.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: "10000"
+      - key: BLOCKFROST_API_KEY
+        value: "mainnetRphtobeMUfaH1ulbeDPsDntux1ESWh9r"
+      - key: PINATA_JWT
+        value: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySW5mb3JtYXRpb24iOnsiaWQiOiIyOTU5MzI5Mi0xMjZkLTRhZGUtYjJkYS1hZjI5NzVhNzMwZDYiLCJlbWFpbCI6InNoZWxieS5kZXZlbG9wZXIuNjk2OTRAZ21haWwuY29tIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsInBpbl9wb2xpY3kiOnsicmVnaW9ucyI6W3siZGVzaXJlZFJlcGxpY2F0aW9uQ291bnQiOjEsImlkIjoiRlJBMSJ9LHsiZGVzaXJlZFJlcGxpY2F0aW9uQ291bnQiOjEsImlkIjoiTllDMSJ9XSwidmVyc2lvbiI6MX0sIm1mYV9lbmFibGVkIjpmYWxzZSwic3RhdHVzIjoiQUNUSVZFIn0sImF1dGhlbnRpY2F0aW9uVHlwZSI6InNjb3BlZEtleSIsInNjb3BlZEtleUtleSI6ImRkN2Q3ZWI0M2VlODRkZGRhMDFkIiwic2NvcGVkS2V5U2VjcmV0IjoiMDM5NzY2MjBlZWU3MzI1NzI5NzE0ZjVkZWQ2NzQyMzQ1OWFjNzA3NjJiMWQ1NzIzMjg3MjMxMzM1NzZhZDkyZiIsImV4cCI6MTc2NzIzMjU2MX0.tgCTzCBpVZmVDx2IgzKK7CgTfMCQnELQbBhJHSRaJHo"
+    healthCheckPath: /health 

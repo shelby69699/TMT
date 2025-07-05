@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔥 Clean Eternl Flow Test</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            max-width: 600px;
+            width: 100%;
+        }
+
+        h1 {
+            color: #2d3748;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5rem;
+        }
+
+        .step {
+            background: #f7fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 15px 0;
+            transition: all 0.3s ease;
+        }
+
+        .step:hover {
+            border-color: #667eea;
+            transform: translateY(-2px);
+        }
+
+        .step-title {
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 10px;
+            font-size: 1.2rem;
+        }
+
+        .step-desc {
+            color: #718096;
+            margin-bottom: 15px;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .status {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 8px;
+            font-weight: 500;
+        }
+
+        .status.success {
+            background: #f0fff4;
+            color: #22543d;
+            border: 1px solid #9ae6b4;
+        }
+
+        .status.error {
+            background: #fed7d7;
+            color: #742a2a;
+            border: 1px solid #fc8181;
+        }
+
+        .status.info {
+            background: #ebf8ff;
+            color: #2a69ac;
+            border: 1px solid #90cdf4;
+        }
+
+        .complete-flow {
+            background: #48bb78;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            border-radius: 15px;
+            margin-top: 30px;
+        }
+
+        .complete-flow h2 {
+            margin-bottom: 15px;
+        }
+
+        .form-group {
+            margin: 15px 0;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #2d3748;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .logs {
+            background: #1a202c;
+            color: #68d391;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            max-height: 200px;
+            overflow-y: auto;
+            margin-top: 15px;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔥 Clean Eternl Flow Test</h1>
+        
+        <!-- Step 1: Connect Wallet -->
+        <div class="step">
+            <div class="step-title">✅ 1. Connect Wallet (Eternl)</div>
+            <div class="step-desc">Connect to your Eternl wallet extension</div>
+            <button class="btn" id="connectBtn" onclick="connectWallet()">
+                Connect Eternl Wallet
+            </button>
+            <div id="connectStatus" class="status hidden"></div>
+        </div>
+
+        <!-- Step 2: Get UTXOs & Address -->
+        <div class="step">
+            <div class="step-title">✅ 2. Get UTXOs & Address</div>
+            <div class="step-desc">Retrieve UTXOs and change address from wallet</div>
+            <button class="btn" id="getDataBtn" onclick="getWalletData()" disabled>
+                Get Wallet Data
+            </button>
+            <div id="getDataStatus" class="status hidden"></div>
+        </div>
+
+        <!-- Step 3: Build Transaction -->
+        <div class="step">
+            <div class="step-title">✅ 3. Build Unsigned Transaction</div>
+            <div class="step-desc">Send request to backend to build CBOR transaction</div>
+            <button class="btn" id="buildTxBtn" onclick="buildTransaction()" disabled>
+                Build Transaction
+            </button>
+            <div id="buildTxStatus" class="status hidden"></div>
+        </div>
+
+        <!-- Step 4: Sign Transaction -->
+        <div class="step">
+            <div class="step-title">✅ 4. Sign Transaction</div>
+            <div class="step-desc">Sign the transaction with your wallet</div>
+            <button class="btn" id="signTxBtn" onclick="signTransaction()" disabled>
+                Sign Transaction
+            </button>
+            <div id="signTxStatus" class="status hidden"></div>
+        </div>
+
+        <!-- Step 5: Submit Transaction -->
+        <div class="step">
+            <div class="step-title">✅ 5. Submit Transaction</div>
+            <div class="step-desc">Submit the signed transaction to the network</div>
+            <button class="btn" id="submitTxBtn" onclick="submitTransaction()" disabled>
+                Submit Transaction
+            </button>
+            <div id="submitTxStatus" class="status hidden"></div>
+        </div>
+
+        <!-- Complete Flow -->
+        <div class="complete-flow">
+            <h2>🎯 Complete Flow Test</h2>
+            <div class="form-group">
+                <label for="tokenName">Token Name:</label>
+                <input type="text" id="tokenName" value="TestToken" />
+            </div>
+            <div class="form-group">
+                <label for="tokenSupply">Token Supply:</label>
+                <input type="number" id="tokenSupply" value="1" />
+            </div>
+            <div class="form-group">
+                <label for="recipientAddress">Recipient Address:</label>
+                <input type="text" id="recipientAddress" placeholder="addr1..." />
+            </div>
+            <div class="form-group">
+                <label for="ipfsCID">IPFS CID (optional):</label>
+                <input type="text" id="ipfsCID" placeholder="QmYourImageCID" />
+            </div>
+            <button class="btn" id="completeFlowBtn" onclick="runCompleteFlow()">
+                🚀 Run Complete Flow
+            </button>
+            <div id="completeFlowStatus" class="status hidden"></div>
+        </div>
+
+        <!-- Logs -->
+        <div class="logs hidden" id="logs"></div>
+    </div>
+
+    <script src="eternl-flow.js"></script>
+    <script>
+        // Global variables
+        let flow = null;
+        let walletData = null;
+        let unsignedTxData = null;
+        let signedTxHex = null;
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            flow = new EternlFlow();
+            showLogs();
+        });
+
+        function showLogs() {
+            const logs = document.getElementById('logs');
+            logs.classList.remove('hidden');
+            
+            // Override console.log to show in UI
+            const originalLog = console.log;
+            console.log = function(...args) {
+                originalLog.apply(console, args);
+                logs.innerHTML += args.join(' ') + '\n';
+                logs.scrollTop = logs.scrollHeight;
+            };
+        }
+
+        function showStatus(elementId, message, type = 'info') {
+            const statusEl = document.getElementById(elementId);
+            statusEl.textContent = message;
+            statusEl.className = `status ${type}`;
+            statusEl.classList.remove('hidden');
+        }
+
+        function enableButton(buttonId) {
+            document.getElementById(buttonId).disabled = false;
+        }
+
+        // Step 1: Connect Wallet
+        async function connectWallet() {
+            try {
+                showStatus('connectStatus', 'Connecting to Eternl wallet...', 'info');
+                await flow.connectWallet();
+                showStatus('connectStatus', '✅ Wallet connected successfully!', 'success');
+                enableButton('getDataBtn');
+            } catch (error) {
+                showStatus('connectStatus', `❌ Error: ${error.message}`, 'error');
+            }
+        }
+
+        // Step 2: Get Wallet Data
+        async function getWalletData() {
+            try {
+                showStatus('getDataStatus', 'Getting wallet data...', 'info');
+                walletData = await flow.getWalletData();
+                showStatus('getDataStatus', `✅ Found ${walletData.utxos.length} UTXOs`, 'success');
+                enableButton('buildTxBtn');
+                
+                // Auto-fill recipient address if empty
+                if (!document.getElementById('recipientAddress').value) {
+                    document.getElementById('recipientAddress').value = walletData.address;
+                }
+            } catch (error) {
+                showStatus('getDataStatus', `❌ Error: ${error.message}`, 'error');
+            }
+        }
+
+        // Step 3: Build Transaction
+        async function buildTransaction() {
+            try {
+                showStatus('buildTxStatus', 'Building unsigned transaction...', 'info');
+                
+                const tokenData = {
+                    recipientAddress: document.getElementById('recipientAddress').value,
+                    tokenName: document.getElementById('tokenName').value,
+                    tokenSupply: parseInt(document.getElementById('tokenSupply').value),
+                    ipfsCID: document.getElementById('ipfsCID').value || null
+                };
+                
+                unsignedTxData = await flow.buildUnsignedTx(walletData.utxos, walletData.address, tokenData);
+                showStatus('buildTxStatus', `✅ Transaction built! Policy ID: ${unsignedTxData.policyId}`, 'success');
+                enableButton('signTxBtn');
+            } catch (error) {
+                showStatus('buildTxStatus', `❌ Error: ${error.message}`, 'error');
+            }
+        }
+
+        // Step 4: Sign Transaction
+        async function signTransaction() {
+            try {
+                showStatus('signTxStatus', 'Signing transaction...', 'info');
+                signedTxHex = await flow.signTx(unsignedTxData.unsignedTxHex);
+                showStatus('signTxStatus', '✅ Transaction signed successfully!', 'success');
+                enableButton('submitTxBtn');
+            } catch (error) {
+                showStatus('signTxStatus', `❌ Error: ${error.message}`, 'error');
+            }
+        }
+
+        // Step 5: Submit Transaction
+        async function submitTransaction() {
+            try {
+                showStatus('submitTxStatus', 'Submitting transaction...', 'info');
+                const txHash = await flow.submitTx(signedTxHex);
+                showStatus('submitTxStatus', `✅ Success! TX Hash: ${txHash}`, 'success');
+            } catch (error) {
+                showStatus('submitTxStatus', `❌ Error: ${error.message}`, 'error');
+            }
+        }
+
+        // Complete Flow
+        async function runCompleteFlow() {
+            try {
+                showStatus('completeFlowStatus', 'Running complete flow...', 'info');
+                
+                const tokenData = {
+                    recipientAddress: document.getElementById('recipientAddress').value,
+                    tokenName: document.getElementById('tokenName').value,
+                    tokenSupply: parseInt(document.getElementById('tokenSupply').value),
+                    ipfsCID: document.getElementById('ipfsCID').value || null
+                };
+                
+                if (!tokenData.recipientAddress) {
+                    throw new Error('Recipient address is required');
+                }
+                
+                const result = await flow.mintToken(tokenData);
+                showStatus('completeFlowStatus', `🎉 Complete flow successful! TX: ${result.txHash}`, 'success');
+                
+                // Enable all buttons for individual testing
+                enableButton('getDataBtn');
+                enableButton('buildTxBtn');
+                enableButton('signTxBtn');
+                enableButton('submitTxBtn');
+                
+            } catch (error) {
+                showStatus('completeFlowStatus', `❌ Error: ${error.message}`, 'error');
+            }
+        }
+    </script>
+</body>
+</html> 

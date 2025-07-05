@@ -1,0 +1,137 @@
+# 🚀 CARDANO TOKEN MINT - GITIGNORE
+
+# Downloaded WASM files (will be downloaded during Netlify build)
+cardano_serialization_lib*.js
+cardano_serialization_lib*.wasm
+local-wasm-loader.js
+
+# WASM libraries directory
+libs/
+
+# Node modules (if any)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Build artifacts
+dist/
+build/
+.cache/
+
+# Environment variables
+.env
+.env.local
+.env.production
+.env.test
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Logs
+logs/
+*.log
+
+# Runtime data
+pids/
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage directory used by tools like istanbul
+coverage/
+.nyc_output/
+
+# Dependency directories
+jspm_packages/
+
+# Optional npm cache directory
+.npm
+
+# Optional eslint cache
+.eslintcache
+
+# Netlify
+.netlify/
+
+# Local development
+*.local
+*.tmp
+temp/
+
+# Backup files
+*.bak
+*.backup
+*.orig
+
+# Test files
+test-results/
+coverage-reports/
+
+# 🔐 Sensitive Files - NEVER COMMIT!
+.env
+*.skey
+*.vkey
+metadata.json
+
+# 📦 Dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+
+# 🔧 Development
+.DS_Store
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# 📊 Logs
+logs/
+*.log
+
+# 🚀 Build outputs
+dist/
+build/
+.next/
+.nuxt/
+
+# ⚡ Runtime
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# 🧪 Testing
+coverage/
+.nyc_output/
+
+# 🌐 Netlify
+.netlify/
+
+# 🔷 Render
+.render/
+
+# 📱 OS generated
+Thumbs.db
+*.tmp
+
+# 🔄 Backup files
+*.bak
+*.backup 

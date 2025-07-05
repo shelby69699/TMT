@@ -1,0 +1,13 @@
+{
+  "type": "all",
+  "scripts": [
+    {
+      "type": "before",
+      "slot": 999999999
+    },
+    {
+      "type": "sig",
+      "keyHash": "DYNAMIC_KEY_HASH"
+    }
+  ]
+} 

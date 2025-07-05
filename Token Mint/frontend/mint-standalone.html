@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔥 TMT - Cardano Token Minting (Standalone)</title>
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    
+    <!-- Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+</head>
+<body>
+    <script>
+    // ✅ FORCE DEFINE API_BASE_URL FIRST
+    window.API_BASE_URL = 'https://tmt-oacu.onrender.com';
+    window.CONFIG = {
+        BACKEND_URL: 'https://tmt-oacu.onrender.com'
+    };
+    
+    console.log('🔥 STANDALONE VERSION LOADED');
+    console.log('✅ API_BASE_URL:', window.API_BASE_URL);
+    console.log('✅ CONFIG.BACKEND_URL:', window.CONFIG.BACKEND_URL);
+    </script>
+    
+    <!-- Include the main script -->
+    <script src="script.js"></script>
+    
+    <!-- Emergency override script -->
+    <script>
+    // Override any undefined API_BASE_URL
+    if (typeof API_BASE_URL === 'undefined') {
+        window.API_BASE_URL = 'https://tmt-oacu.onrender.com';
+        console.log('🚨 Emergency override: API_BASE_URL set to', window.API_BASE_URL);
+    }
+    
+    // Test function for direct backend submission
+    window.testBackendSubmission = async function(signedTx) {
+        console.log('🧪 Testing direct backend submission...');
+        
+        try {
+            const response = await fetch(`${CONFIG.BACKEND_URL}/submit-tx`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    signedTx: signedTx
+                })
+            });
+            
+            if (response.ok) {
+                const result = await response.json();
+                console.log('✅ Direct backend submission successful:', result);
+                return result.txHash;
+            } else {
+                throw new Error(`Backend submission failed with status ${response.status}`);
+            }
+        } catch (error) {
+            console.error('❌ Direct backend submission failed:', error);
+            throw error;
+        }
+    };
+    
+    console.log('🔧 Emergency functions loaded');
+    console.log('Usage: testBackendSubmission("your_signed_tx_hex")');
+    </script>
+    
+    <div class="container">
+        <h1>🔥 TMT - Standalone Token Minting</h1>
+        <p>Direct backend submission enabled!</p>
+        
+        <!-- Include the main HTML content -->
+        <iframe src="index.html" style="width:100%;height:600px;border:none;"></iframe>
+    </div>
+</body>
+</html> 

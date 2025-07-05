@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🚀 TMT - Cardano Token Minting</title>
+    
+    <!-- Cache Control -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="logo">
+                <h1>🚀 TMT</h1>
+                <span>Token Mint Terminal</span>
+            </div>
+            
+            <div class="wallet-section">
+                <button id="connectWallet" class="btn-wallet">
+                    <i class="fas fa-wallet"></i>
+                    Connect Eternl
+                </button>
+                <div id="walletStatus" class="wallet-status hidden">
+                    <span id="walletInfo"></span>
+                    <button id="disconnectWallet" class="btn-disconnect">Disconnect</button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main">
+        <div class="container">
+            
+            <!-- Backend Status -->
+            <div class="status-section">
+                <div id="backendStatus" class="status-card">
+                    <div class="status-indicator">
+                        <i class="fas fa-server"></i>
+                    </div>
+                    <div class="status-info">
+                        <h3>Backend API</h3>
+                        <p id="statusText">Checking connection...</p>
+                        <small id="statusUrl">https://tmt-oacu.onrender.com</small>
+                    </div>
+                    <button id="retryBackend" class="retry-btn hidden" onclick="retryBackendConnection()">
+                        <i class="fas fa-redo"></i>
+                        Retry
+                    </button>
+                    <button id="testBackend" class="test-btn" onclick="testBackendConnection()">
+                        <i class="fas fa-vial"></i>
+                        Test
+                    </button>
+                </div>
+            </div>
+
+            <!-- Minting Form -->
+            <div class="form-section">
+                <div class="form-card">
+                    <h2>🎨 Create Your Cardano Token</h2>
+                    <p>Fill in the details below to mint your custom token on Cardano blockchain</p>
+                    
+                    <form id="mintForm" class="mint-form">
+                        <!-- Token Name & Symbol Row -->
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="tokenName">
+                                    Token Name *
+                                </label>
+                                <input 
+                                    type="text" 
+                                    id="tokenName" 
+                                    name="tokenName" 
+                                    placeholder="MyAwesomeToken" 
+                                    required 
+                                    maxlength="32"
+                                    pattern="[a-zA-Z0-9]+"
+                                    title="Only alphanumeric characters allowed"
+                                >
+                            </div>
+                            <div class="form-group">
+                                <label for="tokenSymbol">
+                                    Token Symbol / Ticker
+                                </label>
+                                <input 
+                                    type="text" 
+                                    id="tokenSymbol" 
+                                    name="tokenSymbol" 
+                                    placeholder="MAT" 
+                                    maxlength="10"
+                                    pattern="[A-Z0-9]+"
+                                    title="Uppercase letters and numbers only"
+                                >
+                            </div>
+                        </div>
+
+                        <!-- Token Description -->
+                        <div class="form-group">
+                            <label for="tokenDescription">
+                                Token Description *
+                            </label>
+                            <textarea 
+                                id="tokenDescription" 
+                                name="tokenDescription" 
+                                placeholder="Describe your token..." 
+                                required 
+                                maxlength="62"
+                                rows="3"
+                            ></textarea>
+                            <div class="char-counter">
+                                <span id="descriptionCharCount">0</span> / 62
+                            </div>
+                        </div>
+
+                        <!-- Token Supply -->
+                        <div class="form-group">
+                            <label for="tokenSupply">
+                                Token Supply Amount *
+                            </label>
+                            <input 
+                                type="number" 
+                                id="tokenSupply" 
+                                name="tokenSupply" 
+                                placeholder="1000000" 
+                                required 
+                                min="1" 
+                                max="45000000000"
+                                step="1"
+                            >
+                            <small>Maximum supply: 45,000,000,000 tokens</small>
+                        </div>
+
+                        <!-- Auto-Send to Connected Wallet -->
+                        <div class="form-group wallet-info">
+                            <label>
+                                <i class="fas fa-wallet"></i>
+                                Token Recipient
+                            </label>
+                            <div class="wallet-display">
+                                <span id="walletRecipientInfo">Connect wallet to see address</span>
+                                <small>Tokens will be sent to your connected wallet</small>
+                            </div>
+                        </div>
+
+                        <!-- Logo Upload -->
+                        <div class="form-group">
+                            <label>
+                                <i class="fas fa-image"></i>
+                                Token Logo *
+                            </label>
+                            <div class="logo-upload">
+                                <input type="file" id="logoFile" accept="image/*" required>
+                                <div class="upload-area" id="uploadArea">
+                                    <div class="upload-content">
+                                        <i class="fas fa-cloud-upload-alt"></i>
+                                        <p>Click to upload or drag & drop</p>
+                                        <small>PNG, JPG, GIF (max 1MB)</small>
+                                    </div>
+                                    <div class="upload-preview hidden" id="uploadPreview">
+                                        <img id="previewImage" alt="Token logo preview">
+                                        <div class="preview-info">
+                                            <p id="fileName"></p>
+                                            <small id="fileSize"></small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="ipfs-status hidden" id="ipfsStatus">
+                                    <i class="fas fa-cloud"></i>
+                                    <span>Uploading to IPFS...</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <button type="submit" id="mintButton" class="btn-mint" disabled>
+                            <i class="fas fa-hammer"></i>
+                            <span>Mint Token on Cardano</span>
+                            <small>Processing via Backend API</small>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Loading Modal -->
+    <div id="loadingModal" class="modal hidden">
+        <div class="modal-content loading-content">
+            <div class="spinner"></div>
+            <h3 id="loadingTitle">Processing...</h3>
+            <p id="loadingMessage">Please wait while we process your request</p>
+        </div>
+    </div>
+
+    <!-- Success Modal -->
+    <div id="successModal" class="modal hidden">
+        <div class="modal-content success-content">
+            <div class="success-icon">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <h3>🎉 Token Minted Successfully!</h3>
+            <p>Your token has been minted on the Cardano blockchain</p>
+            
+            <div class="result-details">
+                <div class="detail-item">
+                    <label>Transaction Hash:</label>
+                    <div class="hash-value" id="txHash">
+                        <span id="txHashText"></span>
+                        <button class="copy-btn" onclick="copyToClipboard('txHashText')">
+                            <i class="fas fa-copy"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="detail-item">
+                    <label>Policy ID:</label>
+                    <div class="hash-value" id="policyId">
+                        <span id="policyIdText"></span>
+                        <button class="copy-btn" onclick="copyToClipboard('policyIdText')">
+                            <i class="fas fa-copy"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="detail-item">
+                    <label>Token Name:</label>
+                    <span id="resultTokenName"></span>
+                </div>
+                
+                <div class="detail-item">
+                    <label>Recipient:</label>
+                    <div class="hash-value">
+                        <span id="resultRecipient"></span>
+                        <button class="copy-btn" onclick="copyToClipboard('resultRecipient')">
+                            <i class="fas fa-copy"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="modal-actions">
+                <a id="explorerLink" href="#" target="_blank" class="btn-primary">
+                    <i class="fas fa-external-link-alt"></i>
+                    View on Cardanoscan
+                </a>
+                <button onclick="closeModal('successModal')" class="btn-secondary">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Error Modal -->
+    <div id="errorModal" class="modal hidden">
+        <div class="modal-content error-content">
+            <div class="error-icon">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <h3>❌ Error</h3>
+            <p id="errorMessage"></p>
+            <button onclick="closeModal('errorModal')" class="btn-secondary">
+                Close
+            </button>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+    
+    <!-- ✅ FRONTEND: Lucid v0.10.7 Stable via ES Modules -->
+    <script type="module">
+        // Load stable Lucid v0.10.7 for frontend
+        try {
+            console.log('🔍 Loading Lucid v0.10.7 for frontend...');
+            
+            const { Lucid, Blockfrost } = await import('https://esm.sh/lucid-cardano@0.10.7');
+            
+            // Make globally available for compatibility
+            window.Lucid = Lucid;
+            window.Blockfrost = Blockfrost;
+            
+            console.log('✅ Lucid v0.10.7 loaded successfully from esm.sh');
+            console.log('   Lucid type:', typeof Lucid);
+            console.log('   Lucid.new exists:', typeof Lucid.new === 'function');
+            console.log('   Blockfrost available:', typeof Blockfrost !== 'undefined');
+            
+        } catch (error) {
+            console.error('❌ Failed to load Lucid v0.10.7 from esm.sh:', error);
+            
+            // Fallback to skypack
+            try {
+                console.log('🔄 Trying fallback: skypack...');
+                const { Lucid, Blockfrost } = await import('https://cdn.skypack.dev/lucid-cardano@0.10.7');
+                
+                window.Lucid = Lucid;
+                window.Blockfrost = Blockfrost;
+                
+                console.log('✅ Lucid v0.10.7 loaded successfully from skypack');
+                
+            } catch (fallbackError) {
+                console.error('❌ All ES module sources failed:', fallbackError);
+                alert('Failed to load Lucid library. Please check your internet connection and refresh.');
+            }
+        }
+    </script>
+    
+
+    
+    <!-- ✅ CRITICAL: Buffer polyfill for browser environment -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/buffer/6.0.3/buffer.min.js"></script>
+    <script>
+        // ✅ CRITICAL: Comprehensive Buffer setup with error handling
+        console.log('🔍 Buffer CDN loaded, checking availability...');
+        console.log('🔍 window.buffer exists:', typeof window.buffer !== 'undefined');
+        console.log('🔍 global buffer exists:', typeof buffer !== 'undefined');
+        
+        if (typeof buffer !== 'undefined' && buffer.Buffer) {
+            // Method 1: Standard assignment
+            window.Buffer = buffer.Buffer;
+            console.log('✅ Buffer assigned via buffer.Buffer');
+        } else if (typeof window.buffer !== 'undefined' && window.buffer.Buffer) {
+            // Method 2: Window buffer assignment
+            window.Buffer = window.buffer.Buffer;
+            console.log('✅ Buffer assigned via window.buffer.Buffer');
+        } else {
+            // Method 3: Fallback - try direct global
+            console.log('⚠️ Trying alternative Buffer assignment methods...');
+            if (typeof Buffer === 'undefined') {
+                // Create minimal Buffer polyfill if all else fails
+                window.Buffer = {
+                    from: function(data, encoding) {
+                        if (encoding === 'hex') {
+                            const bytes = [];
+                            for (let i = 0; i < data.length; i += 2) {
+                                bytes.push(parseInt(data.substr(i, 2), 16));
+                            }
+                            return new Uint8Array(bytes);
+                        }
+                        // For other encodings, convert string to bytes
+                        const encoder = new TextEncoder();
+                        return encoder.encode(data);
+                    }
+                };
+                console.log('✅ Fallback Buffer polyfill created');
+            }
+        }
+        
+        // ✅ CRITICAL: Final validation
+        console.log('🔍 FINAL BUFFER VALIDATION:');
+        console.log('   Buffer exists:', typeof Buffer !== 'undefined');
+        console.log('   Buffer.from exists:', typeof Buffer !== 'undefined' && typeof Buffer.from === 'function');
+        
+        if (typeof Buffer !== 'undefined' && typeof Buffer.from === 'function') {
+            try {
+                const test = Buffer.from('hello', 'utf8');
+                console.log('✅ Buffer.from test successful:', test);
+            } catch (err) {
+                console.error('❌ Buffer.from test failed:', err);
+            }
+        } else {
+            console.error('❌ Buffer or Buffer.from not available after all attempts');
+        }
+    </script>
+    
+    <!-- 🚨 EMERGENCY API FIX - MUST LOAD BEFORE SCRIPT.JS -->
+    <script>
+        // ✅ FORCE DEFINE API_BASE_URL BEFORE MAIN SCRIPT
+        window.API_BASE_URL = 'https://tmt-oacu.onrender.com';
+        window.CONFIG = window.CONFIG || {};
+        window.CONFIG.BACKEND_URL = 'https://tmt-oacu.onrender.com';
+        console.log('🔥 EMERGENCY FIX LOADED');
+        console.log('✅ API_BASE_URL set to:', window.API_BASE_URL);
+        console.log('✅ CONFIG.BACKEND_URL set to:', window.CONFIG.BACKEND_URL);
+        
+
+    </script>
+    
+    <!-- ✅ SIMPLIFIED: Load main script directly -->
+    <script src="script.js?v=6"></script>
+</body>
+</html> 

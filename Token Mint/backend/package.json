@@ -1,0 +1,42 @@
+{
+  "name": "token-mint-backend",
+  "version": "1.0.0",
+  "description": "Pure wallet-based Cardano token minting backend",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "lucid": "node lucid-server.js",
+    "clean": "node mintTx.js",
+    "dev": "nodemon server.js",
+    "dev-lucid": "nodemon lucid-server.js",
+    "dev-clean": "nodemon mintTx.js",
+    "test": "echo \"No tests yet\" && exit 0",
+    "health": "curl http://localhost:${PORT:-10000}/health || echo 'Health check failed'"
+  },
+  "keywords": [
+    "cardano",
+    "token",
+    "minting",
+    "express",
+    "api"
+  ],
+  "author": "TMT Team",
+  "license": "MIT",
+  "dependencies": {
+    "@emurgo/cardano-serialization-lib-nodejs": "^12.0.0",
+    "axios": "^1.6.0",
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "form-data": "^4.0.0",
+    "lucid-cardano": "^0.10.11",
+    "multer": "^1.4.5-lts.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=8.0.0"
+  }
+}
